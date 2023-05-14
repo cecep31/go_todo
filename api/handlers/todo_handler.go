@@ -73,7 +73,7 @@ func RemoveTodo(service todo.Service) fiber.Handler {
 			})
 		}
 		return c.JSON(fiber.Map{
-			"status":  "success",
+			"status":  "Success",
 			"message": "Nsucess remote",
 		})
 	}

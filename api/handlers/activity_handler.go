@@ -21,8 +21,7 @@ func AddActivity(service activity.Service) fiber.Handler {
 		}
 		result, err := service.InsertActivity(&requestBody)
 		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(err))
 		}
 		return c.Status(fiber.StatusCreated).JSON(presenter.ActivitySuccessResponse(result))
 	}
@@ -34,11 +33,8 @@ func UpdateActivity(service activity.Service) fiber.Handler {
 		if err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(err))
 		}
-
 		errrbody := c.BodyParser(&requestBody)
-
 		if errrbody != nil {
-			c.Status(http.StatusBadRequest)
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(errrbody))
 		}
 
@@ -71,7 +67,7 @@ func RemoveActivity(service activity.Service) fiber.Handler {
 			})
 		}
 		return c.JSON(fiber.Map{
-			"status":  "Deleted",
+			"status":  "Success",
 			"message": fmt.Sprintf("Success Deleted %v", id),
 		})
 	}
