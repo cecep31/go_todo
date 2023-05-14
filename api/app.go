@@ -5,6 +5,7 @@ import (
 	"go_todo/api/routes"
 	"go_todo/database"
 	"go_todo/pkg/activity"
+	"go_todo/pkg/todo"
 	"log"
 
 	"github.com/joho/godotenv"
@@ -33,8 +34,12 @@ func main() {
 
 	fmt.Println("create app......")
 	app := fiber.New()
+
 	activityRepo := activity.NewRepo(db)
 	activityService := activity.NewService(activityRepo)
+
+	todoRepo := todo.NewRepo(db)
+	todeService := todo.NewService(todoRepo)
 
 	app.Use(cors.New())
 	app.Get("/", func(ctx *fiber.Ctx) error {
@@ -44,6 +49,7 @@ func main() {
 	})
 	api := app.Group("/")
 	routes.ActivityRouter(api, activityService)
+	routes.TodoRouter(api, todeService)
 	// api := app.Group("/api")
 	// routes.BookRouter(api, bookService)
 	log.Fatal(app.Listen(":8090"))

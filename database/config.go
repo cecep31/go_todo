@@ -20,5 +20,5 @@ func InitDB() (*gorm.DB, error) {
 }
 
 func MigrateDDL(db *gorm.DB) {
-	db.AutoMigrate(&entities.Activity{})
+	db.AutoMigrate(&entities.Activity{}, &entities.Todo{})
 }
