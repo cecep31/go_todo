@@ -118,12 +118,12 @@ func GetTodos(service todo.Service) fiber.Handler {
 		if filter == "" {
 			todo, err = service.GetTodos()
 		} else {
-
 			numtouint, erruuid := uuid.Parse(filter)
 			if erruuid != nil {
-				return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-					"status":  "Not Found",
-					"message": fmt.Sprintf("Activity with ID %v Not Found", numtouint),
+				return c.Status(fiber.StatusOK).JSON(fiber.Map{
+					"status":  "Success",
+					"message": "Success",
+					"data":    todo,
 				})
 			}
 			todo, err = service.GetTodosByActivity(numtouint)
