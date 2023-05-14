@@ -16,7 +16,7 @@ func AddActivity(service activity.Service) fiber.Handler {
 		err := c.BodyParser(&requestBody)
 		if err != nil {
 			c.Status(http.StatusBadRequest)
-			return c.JSON(presenter.BookErrorResponse(err))
+			return c.JSON(presenter.ActivityErrorResponse(err))
 		}
 		result, err := service.InsertActivity(&requestBody)
 		if err != nil {
@@ -39,7 +39,7 @@ func RemoveActivity(service activity.Service) fiber.Handler {
 		err = service.RemoveActivity(uint(id))
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.BookErrorResponse(err))
+			return c.JSON(presenter.ActivityErrorResponse(err))
 		}
 		return c.SendStatus(fiber.StatusOK)
 	}
@@ -55,8 +55,19 @@ func GetActivity(service activity.Service) fiber.Handler {
 		activity, err := service.GetActivity(uint(id))
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.BookErrorResponse(err))
+			return c.JSON(presenter.ActivityErrorResponse(err))
 		}
 		return c.JSON(activity)
+	}
+}
+
+func GetActivities(service activity.Service) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		activity, err := service.GetActivities()
+		if err != nil {
+			c.Status(http.StatusInternalServerError)
+			return c.JSON(presenter.ActivityErrorResponse(err))
+		}
+		return c.JSON(presenter.ActivitiesSuccessResponse(activity))
 	}
 }

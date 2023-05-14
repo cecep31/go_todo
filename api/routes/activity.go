@@ -9,7 +9,8 @@ import (
 
 // BookRouter is the Router for GoFiber App
 func ActivityRouter(app fiber.Router, service activity.Service) {
-	app.Get("/books", handlers.GetActivity(service))
-	app.Post("/books", handlers.AddActivity(service))
-	app.Delete("/books", handlers.RemoveActivity(service))
+	app.Get("/activity-groups", handlers.GetActivities(service))
+	app.Get("/activity-groups/:id", handlers.GetActivity(service))
+	app.Post("/activity-groups", handlers.AddActivity(service))
+	app.Delete("/activity-groups/:id", handlers.RemoveActivity(service))
 }

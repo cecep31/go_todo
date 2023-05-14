@@ -36,7 +36,7 @@ func ActivitySuccessResponse(data *entities.Activity) *fiber.Map {
 }
 
 // BooksSuccessResponse is the list SuccessResponse that will be passed in the response by Handler
-func ActivitiesSuccessResponse(activities *[]Activity) *fiber.Map {
+func ActivitiesSuccessResponse(activities *[]entities.Activity) *fiber.Map {
 	return &fiber.Map{
 		"status":  "Success",
 		"message": "Success",

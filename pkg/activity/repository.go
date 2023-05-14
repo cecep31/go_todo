@@ -10,7 +10,7 @@ import (
 // Repository interface allows us to access the CRUD Operations in mongo here.
 type Repository interface {
 	CreateActivity(activity *entities.Activity) (*entities.Activity, error)
-	// GetActivities() (*[]presenter.Book, error)
+	GetActivities() (*[]entities.Activity, error)
 	GetActivity(id uint) (*presenter.Activity, error)
 	DeleteActivity(id uint) error
 }
@@ -35,10 +35,29 @@ func (r *repository) CreateActivity(activity *entities.Activity) (*entities.Acti
 	return activity, nil
 }
 
+func (r *repository) UpdateActivity(activity *entities.Activity) (*entities.Activity, error) {
+	id := r.db.Save(activity)
+	err := id.Error
+	if err != nil {
+		return nil, err
+	}
+	return activity, nil
+}
+
 // ReadBook is a mongo repository that helps to fetch books
 func (r *repository) GetActivity(id uint) (*presenter.Activity, error) {
 	var activity presenter.Activity
 	result := r.db.First(&activity, id)
+	err := result.Error
+	if err != nil {
+		return nil, err
+	}
+	return &activity, nil
+}
+
+func (r *repository) GetActivities() (*[]entities.Activity, error) {
+	var activity []entities.Activity
+	result := r.db.Find(&activity)
 	err := result.Error
 	if err != nil {
 		return nil, err
