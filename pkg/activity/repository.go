@@ -13,6 +13,7 @@ type Repository interface {
 	GetActivities() (*[]entities.Activity, error)
 	GetActivity(id uint) (*presenter.Activity, error)
 	DeleteActivity(id uint) error
+	UpdateActivity(activity *entities.Activity) (*entities.Activity, error)
 }
 type repository struct {
 	db *gorm.DB
@@ -36,10 +37,18 @@ func (r *repository) CreateActivity(activity *entities.Activity) (*entities.Acti
 }
 
 func (r *repository) UpdateActivity(activity *entities.Activity) (*entities.Activity, error) {
-	id := r.db.Save(activity)
-	err := id.Error
+	activityupdate := new(entities.Activity)
+	activityupdate.ID = activity.ID
+	err := r.db.First(activityupdate).Error
 	if err != nil {
 		return nil, err
+	}
+	activityupdate.Title = activity.Title
+	activityupdate.Email = activity.Email
+	id := r.db.Save(activityupdate)
+	errupdate := id.Error
+	if errupdate != nil {
+		return nil, errupdate
 	}
 	return activity, nil
 }

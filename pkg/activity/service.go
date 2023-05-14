@@ -11,6 +11,7 @@ type Service interface {
 	GetActivity(id uint) (*presenter.Activity, error)
 	RemoveActivity(id uint) error
 	GetActivities() (*[]entities.Activity, error)
+	UpdateActivity(activity *entities.Activity) (*entities.Activity, error)
 }
 
 type service struct {
@@ -27,6 +28,9 @@ func NewService(r Repository) Service {
 // InsertBook is a service layer that helps insert book in BookShop
 func (s *service) InsertActivity(activity *entities.Activity) (*entities.Activity, error) {
 	return s.repository.CreateActivity(activity)
+}
+func (s *service) UpdateActivity(activity *entities.Activity) (*entities.Activity, error) {
+	return s.repository.UpdateActivity(activity)
 }
 
 // FetchBooks is a service layer that helps fetch all books in BookShop

@@ -26,6 +26,31 @@ func AddActivity(service activity.Service) fiber.Handler {
 		return c.JSON(presenter.ActivitySuccessResponse(result))
 	}
 }
+func UpdateActivity(service activity.Service) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		var requestBody entities.Activity
+		id, err := c.ParamsInt("id")
+		if err != nil {
+			return c.JSON(presenter.ActivityErrorResponse(err))
+		}
+
+		errr := c.BodyParser(&requestBody)
+
+		if errr != nil {
+			c.Status(http.StatusBadRequest)
+			return c.JSON(presenter.ActivityErrorResponse(errr))
+		}
+
+		requestBody.ID = uint(id)
+
+		result, err := service.UpdateActivity(&requestBody)
+		if err != nil {
+			c.Status(http.StatusInternalServerError)
+			return c.JSON(presenter.ActivityErrorResponse(err))
+		}
+		return c.JSON(presenter.ActivitySuccessResponse(result))
+	}
+}
 
 // UpdateBook is handler/controller which updates data of Books in the BookShop
 

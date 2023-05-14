@@ -12,5 +12,6 @@ func ActivityRouter(app fiber.Router, service activity.Service) {
 	app.Get("/activity-groups", handlers.GetActivities(service))
 	app.Get("/activity-groups/:id", handlers.GetActivity(service))
 	app.Post("/activity-groups", handlers.AddActivity(service))
+	app.Patch("/activity-groups/:id", handlers.UpdateActivity(service))
 	app.Delete("/activity-groups/:id", handlers.RemoveActivity(service))
 }
