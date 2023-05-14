@@ -54,7 +54,7 @@ func ActivitySuccessCreateResponse(entities *entities.Activity) *fiber.Map {
 func ActivityErrorResponse(err error) *fiber.Map {
 	return &fiber.Map{
 		"status":  "Failed",
-		"message": "err.Error()",
+		"message": err.Error(),
 		"data":    "",
 	}
 }

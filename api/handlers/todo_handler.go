@@ -15,7 +15,7 @@ import (
 func AddTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		requestBody := new(entities.Todo)
-		errbody := c.BodyParser(requestBody)
+		errbody := c.BodyParser(&requestBody)
 		if errbody != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.TodoErrorResponse(errbody))
 		}
