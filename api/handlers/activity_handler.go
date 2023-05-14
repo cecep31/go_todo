@@ -88,7 +88,7 @@ func GetActivity(service activity.Service) fiber.Handler {
 		if errservice != nil {
 			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(errservice))
 		}
-		return c.JSON(activity)
+		return c.JSON(presenter.ActivitySuccessResponse(activity))
 	}
 }
 

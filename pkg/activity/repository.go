@@ -1,7 +1,6 @@
 package activity
 
 import (
-	"go_todo/api/presenter"
 	"go_todo/pkg/entities"
 
 	"gorm.io/gorm"
@@ -11,7 +10,7 @@ import (
 type Repository interface {
 	CreateActivity(activity *entities.Activity) (*entities.Activity, error)
 	GetActivities() (*[]entities.Activity, error)
-	GetActivity(id uint) (*presenter.Activity, error)
+	GetActivity(id uint) (*entities.Activity, error)
 	DeleteActivity(id uint) error
 	UpdateActivity(activity *entities.Activity) (*entities.Activity, error)
 }
@@ -54,8 +53,8 @@ func (r *repository) UpdateActivity(activity *entities.Activity) (*entities.Acti
 }
 
 // ReadBook is a mongo repository that helps to fetch books
-func (r *repository) GetActivity(id uint) (*presenter.Activity, error) {
-	var activity presenter.Activity
+func (r *repository) GetActivity(id uint) (*entities.Activity, error) {
+	var activity entities.Activity
 	result := r.db.First(&activity, id)
 	err := result.Error
 	if err != nil {

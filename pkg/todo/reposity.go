@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"go_todo/api/presenter"
 	"go_todo/pkg/entities"
 
 	"gorm.io/gorm"
@@ -11,7 +10,7 @@ import (
 type Repository interface {
 	CreateTodo(Todo *entities.Todo) (*entities.Todo, error)
 	GetTodos() (*[]entities.Todo, error)
-	GetTodo(id uint) (*presenter.Todo, error)
+	GetTodo(id uint) (*entities.Todo, error)
 	DeleteTodo(id uint) error
 	UpdateTodo(Todo *entities.Todo) (*entities.Todo, error)
 	GetTodosByactivity(activity_id uint) (*[]entities.Todo, error)
@@ -56,8 +55,8 @@ func (r *repository) UpdateTodo(todo *entities.Todo) (*entities.Todo, error) {
 }
 
 // ReadBook is a mongo repository that helps to fetch books
-func (r *repository) GetTodo(id uint) (*presenter.Todo, error) {
-	var todo presenter.Todo
+func (r *repository) GetTodo(id uint) (*entities.Todo, error) {
+	var todo entities.Todo
 	result := r.db.First(&todo, id)
 	err := result.Error
 	if err != nil {

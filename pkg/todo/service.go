@@ -1,14 +1,13 @@
 package todo
 
 import (
-	"go_todo/api/presenter"
 	"go_todo/pkg/entities"
 )
 
 // Service is an interface from which our api module can access our repository of all our models
 type Service interface {
 	InsertTodo(book *entities.Todo) (*entities.Todo, error)
-	GetTodo(id uint) (*presenter.Todo, error)
+	GetTodo(id uint) (*entities.Todo, error)
 	RemoveTodo(id uint) error
 	GetTodos() (*[]entities.Todo, error)
 	UpdateTodo(Todo *entities.Todo) (*entities.Todo, error)
@@ -35,7 +34,7 @@ func (s *service) UpdateTodo(Todo *entities.Todo) (*entities.Todo, error) {
 }
 
 // FetchBooks is a service layer that helps fetch all books in BookShop
-func (s *service) GetTodo(id uint) (*presenter.Todo, error) {
+func (s *service) GetTodo(id uint) (*entities.Todo, error) {
 	return s.repository.GetTodo(id)
 }
 
