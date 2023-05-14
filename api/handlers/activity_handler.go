@@ -31,7 +31,10 @@ func UpdateActivity(service activity.Service) fiber.Handler {
 		var requestBody entities.Activity
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
+			})
 		}
 		errrbody := c.BodyParser(&requestBody)
 		if errrbody != nil {
@@ -42,8 +45,10 @@ func UpdateActivity(service activity.Service) fiber.Handler {
 
 		result, err := service.UpdateActivity(&requestBody)
 		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
+			})
 		}
 		return c.Status(fiber.StatusOK).JSON(presenter.ActivitySuccessResponse(result))
 	}
