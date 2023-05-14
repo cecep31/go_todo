@@ -56,13 +56,16 @@ func RemoveActivity(service activity.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
+			})
 		}
 		errservice := service.RemoveActivity(uint(id))
 		if errservice != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  "Failed",
-				"message": fmt.Sprintf("Failed Deleted %v", id),
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
 			})
 		}
 		return c.JSON(fiber.Map{
@@ -77,11 +80,17 @@ func GetActivity(service activity.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
+			})
 		}
 		activity, errservice := service.GetActivity(uint(id))
 		if errservice != nil {
-			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(errservice))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
+			})
 		}
 		return c.JSON(presenter.ActivitySuccessResponse(activity))
 	}

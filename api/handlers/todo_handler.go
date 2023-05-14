@@ -33,7 +33,10 @@ func UpdateTodo(service todo.Service) fiber.Handler {
 		var requestBody entities.Todo
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.JSON(presenter.TodoErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
+			})
 		}
 
 		errbody := c.BodyParser(&requestBody)
@@ -83,11 +86,17 @@ func GetTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(presenter.TodoErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
+			})
 		}
 		todo, errservice := service.GetTodo(uint(id))
 		if errservice != nil {
-			return c.Status(fiber.StatusNotFound).JSON(presenter.TodoErrorResponse(errservice))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
+			})
 		}
 		return c.JSON(presenter.TodoSuccessResponse(todo))
 	}
