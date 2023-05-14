@@ -129,7 +129,11 @@ func GetTodos(service todo.Service) fiber.Handler {
 			todo, err = service.GetTodosByActivity(numtouint)
 		}
 		if err != nil {
-			return c.JSON(presenter.TodosSuccessResponse(todo))
+			return c.JSON(fiber.Map{
+				"status":  "Success",
+				"message": "Success",
+				"data":    []entities.Todo{},
+			})
 		}
 		return c.JSON(presenter.TodosSuccessResponse(todo))
 	}

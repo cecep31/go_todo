@@ -81,7 +81,7 @@ func (r *repository) GetTodosByactivity(activity_id uuid.UUID) (*[]entities.Todo
 	result := r.db.Where("activity_group_id = ?", activity_id).Find(&todo)
 	err := result.Error
 	if err != nil {
-		return &todo, err
+		return nil, err
 	}
 	return &todo, nil
 }
