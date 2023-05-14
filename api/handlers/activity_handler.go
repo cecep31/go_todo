@@ -39,7 +39,10 @@ func UpdateActivity(service activity.Service) fiber.Handler {
 		}
 		idparam, erruuid := uuid.Parse(id)
 		if erruuid != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(erruuid))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
+			})
 		}
 		requestBody.ID = idparam
 
