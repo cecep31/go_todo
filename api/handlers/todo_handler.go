@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"go_todo/api/presenter"
 	"go_todo/pkg/entities"
 	"go_todo/pkg/todo"
@@ -60,14 +61,14 @@ func RemoveTodo(service todo.Service) fiber.Handler {
 		if err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
-				"message": "Not Found",
+				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
 			})
 		}
 		err = service.RemoveTodo(uint(id))
 		if err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
-				"message": "Not Found",
+				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
 			})
 		}
 		return c.JSON(fiber.Map{
