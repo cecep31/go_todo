@@ -6,9 +6,9 @@ import (
 	"go_todo/pkg/entities"
 	"go_todo/pkg/todo"
 	"net/http"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 // AddBook is handler/controller which creates Books in the BookShop
@@ -19,6 +19,7 @@ func AddTodo(service todo.Service) fiber.Handler {
 		if errbody != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.TodoErrorResponse(errbody))
 		}
+		requestBody.ID = uuid.New()
 		result, err := service.InsertTodo(requestBody)
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
@@ -30,8 +31,9 @@ func AddTodo(service todo.Service) fiber.Handler {
 func UpdateTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var requestBody entities.Todo
-		id, err := c.ParamsInt("id")
-		if err != nil {
+		id := c.Params("id")
+		idparam, erruuid := uuid.Parse(id)
+		if erruuid != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
@@ -44,7 +46,7 @@ func UpdateTodo(service todo.Service) fiber.Handler {
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.TodoErrorResponse(errbody))
 		}
 
-		requestBody.ID = uint(id)
+		requestBody.ID = idparam
 
 		result, err := service.UpdateTodo(&requestBody)
 		if err != nil {
@@ -62,14 +64,15 @@ func UpdateTodo(service todo.Service) fiber.Handler {
 // RemoveBook is handler/controller which removes Books from the BookShop
 func RemoveTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id, err := c.ParamsInt("id")
-		if err != nil {
+		id := c.Params("id")
+		idparam, erruuid := uuid.Parse(id)
+		if erruuid != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
 			})
 		}
-		err = service.RemoveTodo(uint(id))
+		err := service.RemoveTodo(idparam)
 		if err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
@@ -86,14 +89,15 @@ func RemoveTodo(service todo.Service) fiber.Handler {
 // GetBooks is handler/controller which lists all Books from the BookShop
 func GetTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id, err := c.ParamsInt("id")
-		if err != nil {
+		id := c.Params("id")
+		idparam, erruuid := uuid.Parse(id)
+		if erruuid != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
 			})
 		}
-		todo, errservice := service.GetTodo(uint(id))
+		todo, errservice := service.GetTodo(idparam)
 		if errservice != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
@@ -114,11 +118,14 @@ func GetTodos(service todo.Service) fiber.Handler {
 		if filter == "" {
 			todo, err = service.GetTodos()
 		} else {
-			num, errconv := strconv.Atoi(filter)
-			if errconv != nil {
-				return c.JSON(presenter.TodoErrorResponse(errconv))
+
+			numtouint, erruuid := uuid.Parse(filter)
+			if erruuid != nil {
+				return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+					"status":  "Not Found",
+					"message": fmt.Sprintf("Activity with ID %v Not Found", numtouint),
+				})
 			}
-			numtouint := uint(num)
 			todo, err = service.GetTodosByActivity(numtouint)
 		}
 		if err != nil {

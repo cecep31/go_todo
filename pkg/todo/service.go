@@ -2,16 +2,18 @@ package todo
 
 import (
 	"go_todo/pkg/entities"
+
+	"github.com/google/uuid"
 )
 
 // Service is an interface from which our api module can access our repository of all our models
 type Service interface {
 	InsertTodo(book *entities.Todo) (*entities.Todo, error)
-	GetTodo(id uint) (*entities.Todo, error)
-	RemoveTodo(id uint) error
+	GetTodo(id uuid.UUID) (*entities.Todo, error)
+	RemoveTodo(id uuid.UUID) error
 	GetTodos() (*[]entities.Todo, error)
 	UpdateTodo(Todo *entities.Todo) (*entities.Todo, error)
-	GetTodosByActivity(activity_id uint) (*[]entities.Todo, error)
+	GetTodosByActivity(activity_id uuid.UUID) (*[]entities.Todo, error)
 }
 
 type service struct {
@@ -34,7 +36,7 @@ func (s *service) UpdateTodo(Todo *entities.Todo) (*entities.Todo, error) {
 }
 
 // FetchBooks is a service layer that helps fetch all books in BookShop
-func (s *service) GetTodo(id uint) (*entities.Todo, error) {
+func (s *service) GetTodo(id uuid.UUID) (*entities.Todo, error) {
 	return s.repository.GetTodo(id)
 }
 
@@ -42,11 +44,11 @@ func (s *service) GetTodos() (*[]entities.Todo, error) {
 	return s.repository.GetTodos()
 }
 
-func (s *service) GetTodosByActivity(activity_id uint) (*[]entities.Todo, error) {
+func (s *service) GetTodosByActivity(activity_id uuid.UUID) (*[]entities.Todo, error) {
 	return s.repository.GetTodosByactivity(activity_id)
 }
 
 // RemoveBook is a service layer that helps remove books from BookShop
-func (s *service) RemoveTodo(id uint) error {
+func (s *service) RemoveTodo(id uuid.UUID) error {
 	return s.repository.DeleteTodo(id)
 }

@@ -3,6 +3,7 @@ package todo
 import (
 	"go_todo/pkg/entities"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -10,10 +11,10 @@ import (
 type Repository interface {
 	CreateTodo(Todo *entities.Todo) (*entities.Todo, error)
 	GetTodos() (*[]entities.Todo, error)
-	GetTodo(id uint) (*entities.Todo, error)
-	DeleteTodo(id uint) error
+	GetTodo(id uuid.UUID) (*entities.Todo, error)
+	DeleteTodo(id uuid.UUID) error
 	UpdateTodo(Todo *entities.Todo) (*entities.Todo, error)
-	GetTodosByactivity(activity_id uint) (*[]entities.Todo, error)
+	GetTodosByactivity(activity_id uuid.UUID) (*[]entities.Todo, error)
 }
 type repository struct {
 	db *gorm.DB
@@ -55,7 +56,7 @@ func (r *repository) UpdateTodo(todo *entities.Todo) (*entities.Todo, error) {
 }
 
 // ReadBook is a mongo repository that helps to fetch books
-func (r *repository) GetTodo(id uint) (*entities.Todo, error) {
+func (r *repository) GetTodo(id uuid.UUID) (*entities.Todo, error) {
 	var todo entities.Todo
 	result := r.db.First(&todo, id)
 	err := result.Error
@@ -75,7 +76,7 @@ func (r *repository) GetTodos() (*[]entities.Todo, error) {
 	return &todo, nil
 }
 
-func (r *repository) GetTodosByactivity(activity_id uint) (*[]entities.Todo, error) {
+func (r *repository) GetTodosByactivity(activity_id uuid.UUID) (*[]entities.Todo, error) {
 	var todo []entities.Todo
 	result := r.db.Where("activity_group_id = ?", activity_id).Find(&todo)
 	err := result.Error
@@ -86,7 +87,7 @@ func (r *repository) GetTodosByactivity(activity_id uint) (*[]entities.Todo, err
 }
 
 // DeleteBook is a mongo repository that helps to delete books
-func (r *repository) DeleteTodo(id uint) error {
+func (r *repository) DeleteTodo(id uuid.UUID) error {
 	var todo entities.Todo
 	todo.ID = id
 	errcheck := r.db.First(&todo).Error

@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 // Book is the presenter object which will be passed in the response by Handler
 type Todo struct {
-	ID        uint `gorm:"primarykey;column:todo_id" json:"id"`
+	ID        uuid.UUID `gorm:"primarykey;column:todo_id" json:"id"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Title     string `json:"title"`

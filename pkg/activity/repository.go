@@ -3,6 +3,7 @@ package activity
 import (
 	"go_todo/pkg/entities"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -10,8 +11,8 @@ import (
 type Repository interface {
 	CreateActivity(activity *entities.Activity) (*entities.Activity, error)
 	GetActivities() (*[]entities.Activity, error)
-	GetActivity(id uint) (*entities.Activity, error)
-	DeleteActivity(id uint) error
+	GetActivity(id uuid.UUID) (*entities.Activity, error)
+	DeleteActivity(id uuid.UUID) error
 	UpdateActivity(activity *entities.Activity) (*entities.Activity, error)
 }
 type repository struct {
@@ -53,7 +54,7 @@ func (r *repository) UpdateActivity(activity *entities.Activity) (*entities.Acti
 }
 
 // ReadBook is a mongo repository that helps to fetch books
-func (r *repository) GetActivity(id uint) (*entities.Activity, error) {
+func (r *repository) GetActivity(id uuid.UUID) (*entities.Activity, error) {
 	var activity entities.Activity
 	result := r.db.First(&activity, id)
 	err := result.Error
@@ -74,7 +75,7 @@ func (r *repository) GetActivities() (*[]entities.Activity, error) {
 }
 
 // DeleteBook is a mongo repository that helps to delete books
-func (r *repository) DeleteActivity(id uint) error {
+func (r *repository) DeleteActivity(id uuid.UUID) error {
 	var activity entities.Activity
 	activity.ID = id
 	errcheck := r.db.First(&activity).Error

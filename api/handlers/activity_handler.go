@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 // AddBook is handler/controller which creates Books in the BookShop
@@ -19,6 +20,7 @@ func AddActivity(service activity.Service) fiber.Handler {
 			c.Status(http.StatusBadRequest)
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(errbody))
 		}
+		requestBody.ID = uuid.New()
 		result, err := service.InsertActivity(requestBody)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(err))
@@ -29,19 +31,17 @@ func AddActivity(service activity.Service) fiber.Handler {
 func UpdateActivity(service activity.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var requestBody entities.Activity
-		id, err := c.ParamsInt("id")
-		if err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  "Not Found",
-				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
-			})
-		}
+		id := c.Params("id")
+
 		errrbody := c.BodyParser(&requestBody)
 		if errrbody != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(errrbody))
 		}
-
-		requestBody.ID = uint(id)
+		idparam, erruuid := uuid.Parse(id)
+		if erruuid != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(erruuid))
+		}
+		requestBody.ID = idparam
 
 		result, err := service.UpdateActivity(&requestBody)
 		if err != nil {
@@ -59,14 +59,15 @@ func UpdateActivity(service activity.Service) fiber.Handler {
 // RemoveBook is handler/controller which removes Books from the BookShop
 func RemoveActivity(service activity.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id, err := c.ParamsInt("id")
-		if err != nil {
+		id := c.Params("id")
+		idparam, erruuid := uuid.Parse(id)
+		if erruuid != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
 			})
 		}
-		errservice := service.RemoveActivity(uint(id))
+		errservice := service.RemoveActivity(idparam)
 		if errservice != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
@@ -83,14 +84,16 @@ func RemoveActivity(service activity.Service) fiber.Handler {
 // GetBooks is handler/controller which lists all Books from the BookShop
 func GetActivity(service activity.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		id, err := c.ParamsInt("id")
-		if err != nil {
+
+		id := c.Params("id")
+		idparam, erruuid := uuid.Parse(id)
+		if erruuid != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
 				"message": fmt.Sprintf("Activity with ID %v Not Found", id),
 			})
 		}
-		activity, errservice := service.GetActivity(uint(id))
+		activity, errservice := service.GetActivity(idparam)
 		if errservice != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
