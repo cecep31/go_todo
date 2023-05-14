@@ -24,12 +24,11 @@ func AddTodo(service todo.Service) fiber.Handler {
 			c.Status(http.StatusInternalServerError)
 			return c.JSON(presenter.TodoErrorResponse(err))
 		}
-		return c.JSON(presenter.TodoSuccessResponse(result))
+		return c.Status(fiber.StatusCreated).JSON(presenter.TodoSuccessResponse(result))
 	}
 }
 func UpdateTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-
 		var requestBody entities.Todo
 		id, err := c.ParamsInt("id")
 		if err != nil {
@@ -49,7 +48,10 @@ func UpdateTodo(service todo.Service) fiber.Handler {
 
 		result, err := service.UpdateTodo(&requestBody)
 		if err != nil {
-			return c.Status(fiber.StatusNotFound).JSON(presenter.TodoErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": fmt.Sprintf("Todo with ID %v Not Found", id),
+			})
 		}
 		return c.JSON(presenter.TodoSuccessResponse(result))
 	}
@@ -76,7 +78,7 @@ func RemoveTodo(service todo.Service) fiber.Handler {
 		}
 		return c.JSON(fiber.Map{
 			"status":  "Success",
-			"message": "Nsucess remote",
+			"message": "sucess remove",
 		})
 	}
 }
