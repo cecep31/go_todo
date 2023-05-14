@@ -129,8 +129,7 @@ func GetTodos(service todo.Service) fiber.Handler {
 			todo, err = service.GetTodosByActivity(numtouint)
 		}
 		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.TodoErrorResponse(err))
+			return c.JSON(presenter.TodosSuccessResponse(todo))
 		}
 		return c.JSON(presenter.TodosSuccessResponse(todo))
 	}
