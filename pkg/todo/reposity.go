@@ -87,9 +87,13 @@ func (r *repository) GetTodosByactivity(activity_id uint) (*[]entities.Todo, err
 
 // DeleteBook is a mongo repository that helps to delete books
 func (r *repository) DeleteTodo(id uint) error {
-	var Todo entities.Todo
-	Todo.ID = id
-	err := r.db.Delete(&Todo).Error
+	var todo entities.Todo
+	todo.ID = id
+	errcheck := r.db.First(&todo).Error
+	if errcheck != nil {
+		return errcheck
+	}
+	err := r.db.Delete(&todo).Error
 	if err != nil {
 		return err
 	}

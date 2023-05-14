@@ -13,13 +13,13 @@ import (
 // AddBook is handler/controller which creates Books in the BookShop
 func AddActivity(service activity.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var requestBody entities.Activity
-		err := c.BodyParser(&requestBody)
-		if err != nil {
+		requestBody := new(entities.Activity)
+		errbody := c.BodyParser(&requestBody)
+		if errbody != nil {
 			c.Status(http.StatusBadRequest)
-			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(errbody))
 		}
-		result, err := service.InsertActivity(&requestBody)
+		result, err := service.InsertActivity(requestBody)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(err))
 		}
@@ -56,12 +56,11 @@ func RemoveActivity(service activity.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(err))
 		}
 		errservice := service.RemoveActivity(uint(id))
 		if errservice != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(fiber.Map{
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Failed",
 				"message": fmt.Sprintf("Failed Deleted %v", id),
 			})

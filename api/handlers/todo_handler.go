@@ -13,12 +13,12 @@ import (
 // AddBook is handler/controller which creates Books in the BookShop
 func AddTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var requestBody entities.Todo
-		errbody := c.BodyParser(&requestBody)
+		requestBody := new(entities.Todo)
+		errbody := c.BodyParser(requestBody)
 		if errbody != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(presenter.TodoErrorResponse(errbody))
 		}
-		result, err := service.InsertTodo(&requestBody)
+		result, err := service.InsertTodo(requestBody)
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
 			return c.JSON(presenter.TodoErrorResponse(err))
@@ -45,8 +45,7 @@ func UpdateTodo(service todo.Service) fiber.Handler {
 
 		result, err := service.UpdateTodo(&requestBody)
 		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.TodoErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(presenter.TodoErrorResponse(err))
 		}
 		return c.JSON(presenter.TodoSuccessResponse(result))
 	}
@@ -59,15 +58,14 @@ func RemoveTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.JSON(fiber.Map{
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
 				"message": "Not Found",
 			})
 		}
 		err = service.RemoveTodo(uint(id))
 		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(fiber.Map{
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "Not Found",
 				"message": "Not Found",
 			})
