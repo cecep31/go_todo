@@ -52,7 +52,7 @@ func (r *repository) UpdateTodo(todo *entities.Todo) (*entities.Todo, error) {
 	if errupdate != nil {
 		return nil, errupdate
 	}
-	return todo, nil
+	return todoupdate, nil
 }
 
 // ReadBook is a mongo repository that helps to fetch books

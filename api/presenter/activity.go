@@ -11,10 +11,10 @@ import (
 // Book is the presenter object which will be passed in the response by Handler
 type Activity struct {
 	ID        uuid.UUID `gorm:"primarykey;column:activity_id" json:"id"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Title     string `json:"title"`
-	Email     string `json:"email"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	Title     string    `json:"title"`
+	Email     string    `json:"email"`
 }
 
 // BookSuccessResponse is the singular SuccessResponse that will be passed in the response by

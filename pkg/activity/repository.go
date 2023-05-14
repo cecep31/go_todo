@@ -50,7 +50,7 @@ func (r *repository) UpdateActivity(activity *entities.Activity) (*entities.Acti
 	if errupdate != nil {
 		return nil, errupdate
 	}
-	return activity, nil
+	return activityupdate, nil
 }
 
 // ReadBook is a mongo repository that helps to fetch books
