@@ -5,18 +5,16 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
 // Book is the presenter object which will be passed in the response by Handler
 type Todo struct {
-	ID        uint `gorm:"primarykey"`
+	ID        uint `gorm:"primarykey;column:todo_id" json:"id"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Title     string         `json:"title"`
-	Is_active bool           `json:"is_active"`
-	Priority  string         `json:"priority"`
+	Title     string `json:"title"`
+	Is_active bool   `json:"is_active"`
+	Priority  string `json:"priority"`
 }
 
 // BookSuccessResponse is the singular SuccessResponse that will be passed in the response by

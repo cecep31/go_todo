@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"fmt"
 	"go_todo/api/presenter"
 	"go_todo/pkg/entities"
 
@@ -68,7 +67,6 @@ func (r *repository) GetTodo(id uint) (*presenter.Todo, error) {
 }
 
 func (r *repository) GetTodos() (*[]entities.Todo, error) {
-	fmt.Println("tidak masuk filtering")
 	var todo []entities.Todo
 	result := r.db.Find(&todo)
 	err := result.Error
@@ -79,7 +77,6 @@ func (r *repository) GetTodos() (*[]entities.Todo, error) {
 }
 
 func (r *repository) GetTodosByactivity(activity_id uint) (*[]entities.Todo, error) {
-	fmt.Println("masuk filtering")
 	var todo []entities.Todo
 	result := r.db.Where("activity_group_id = ?", activity_id).Find(&todo)
 	err := result.Error

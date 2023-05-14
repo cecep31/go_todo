@@ -1,9 +1,13 @@
 package entities
 
-import "gorm.io/gorm"
+import (
+	"time"
+)
 
 type Todo struct {
-	gorm.Model
+	ID                uint `gorm:"primarykey;column:todo_id" json:"id"`
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
 	Activity_group_id uint   `json:"activity_group_id"`
 	Title             string `json:"title"`
 	Is_active         bool   `json:"is_active"`
