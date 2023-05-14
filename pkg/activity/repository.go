@@ -78,7 +78,7 @@ func (r *repository) GetActivities() (*[]entities.Activity, error) {
 func (r *repository) DeleteActivity(id uint) error {
 	var activity entities.Activity
 	activity.ID = id
-	err := r.db.Delete(&activity).Error
+	err := r.db.Delete(&activity, id).Error
 	if err != nil {
 		return err
 	}

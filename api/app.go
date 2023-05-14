@@ -17,16 +17,13 @@ import (
 
 func main() {
 	fmt.Println("init env......")
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
 
 	fmt.Println("init db......")
-	db, err := database.InitDB()
+	db, errdb := database.InitDB()
 	// db, cancel, err := databaseConnection()
-	if err != nil {
-		log.Fatal("Database Connection Error $s", err)
+	if errdb != nil {
+		log.Fatal("Database Connection Error $s", errdb)
 	}
 	fmt.Println("Database connection success!")
 
@@ -54,5 +51,5 @@ func main() {
 	routes.TodoRouter(api, todeService)
 	// api := app.Group("/api")
 	// routes.BookRouter(api, bookService)
-	log.Fatal(app.Listen(":8090"))
+	log.Fatal(app.Listen(":3030"))
 }

@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN go get
+RUN go get ./api
 
-RUN go build api/app.go
+RUN go build ./api/app.go
 
 EXPOSE 8090
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"go_todo/api/presenter"
 	"go_todo/pkg/activity"
 	"go_todo/pkg/entities"
@@ -16,14 +17,14 @@ func AddActivity(service activity.Service) fiber.Handler {
 		err := c.BodyParser(&requestBody)
 		if err != nil {
 			c.Status(http.StatusBadRequest)
-			return c.JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(err))
 		}
 		result, err := service.InsertActivity(&requestBody)
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
 			return c.JSON(presenter.ActivityErrorResponse(err))
 		}
-		return c.JSON(presenter.ActivitySuccessResponse(result))
+		return c.Status(fiber.StatusCreated).JSON(presenter.ActivitySuccessResponse(result))
 	}
 }
 func UpdateActivity(service activity.Service) fiber.Handler {
@@ -31,14 +32,14 @@ func UpdateActivity(service activity.Service) fiber.Handler {
 		var requestBody entities.Activity
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(err))
 		}
 
-		errr := c.BodyParser(&requestBody)
+		errrbody := c.BodyParser(&requestBody)
 
-		if errr != nil {
+		if errrbody != nil {
 			c.Status(http.StatusBadRequest)
-			return c.JSON(presenter.ActivityErrorResponse(errr))
+			return c.Status(fiber.StatusBadRequest).JSON(presenter.ActivityErrorResponse(errrbody))
 		}
 
 		requestBody.ID = uint(id)
@@ -48,7 +49,7 @@ func UpdateActivity(service activity.Service) fiber.Handler {
 			c.Status(http.StatusInternalServerError)
 			return c.JSON(presenter.ActivityErrorResponse(err))
 		}
-		return c.JSON(presenter.ActivitySuccessResponse(result))
+		return c.Status(fiber.StatusOK).JSON(presenter.ActivitySuccessResponse(result))
 	}
 }
 
@@ -61,12 +62,18 @@ func RemoveActivity(service activity.Service) fiber.Handler {
 		if err != nil {
 			return c.JSON(presenter.ActivityErrorResponse(err))
 		}
-		err = service.RemoveActivity(uint(id))
-		if err != nil {
+		errservice := service.RemoveActivity(uint(id))
+		if errservice != nil {
 			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.ActivityErrorResponse(err))
+			return c.JSON(fiber.Map{
+				"status":  "Failed",
+				"message": fmt.Sprintf("Failed Deleted %v", id),
+			})
 		}
-		return c.SendStatus(fiber.StatusOK)
+		return c.JSON(fiber.Map{
+			"status":  "Deleted",
+			"message": fmt.Sprintf("Success Deleted %v", id),
+		})
 	}
 }
 
@@ -75,12 +82,11 @@ func GetActivity(service activity.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.JSON(presenter.ActivityErrorResponse(err))
+			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(err))
 		}
-		activity, err := service.GetActivity(uint(id))
-		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.ActivityErrorResponse(err))
+		activity, errservice := service.GetActivity(uint(id))
+		if errservice != nil {
+			return c.Status(fiber.StatusNotFound).JSON(presenter.ActivityErrorResponse(errservice))
 		}
 		return c.JSON(activity)
 	}

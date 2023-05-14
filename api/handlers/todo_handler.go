@@ -14,10 +14,9 @@ import (
 func AddTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var requestBody entities.Todo
-		err := c.BodyParser(&requestBody)
-		if err != nil {
-			c.Status(http.StatusBadRequest)
-			return c.JSON(presenter.TodoErrorResponse(err))
+		errbody := c.BodyParser(&requestBody)
+		if errbody != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(presenter.TodoErrorResponse(errbody))
 		}
 		result, err := service.InsertTodo(&requestBody)
 		if err != nil {
@@ -36,11 +35,10 @@ func UpdateTodo(service todo.Service) fiber.Handler {
 			return c.JSON(presenter.TodoErrorResponse(err))
 		}
 
-		errr := c.BodyParser(&requestBody)
+		errbody := c.BodyParser(&requestBody)
 
-		if errr != nil {
-			c.Status(http.StatusBadRequest)
-			return c.JSON(presenter.TodoErrorResponse(errr))
+		if errbody != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(presenter.TodoErrorResponse(errbody))
 		}
 
 		requestBody.ID = uint(id)
@@ -61,14 +59,23 @@ func RemoveTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		id, err := c.ParamsInt("id")
 		if err != nil {
-			return c.JSON(presenter.TodoErrorResponse(err))
+			return c.JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": "Not Found",
+			})
 		}
 		err = service.RemoveTodo(uint(id))
 		if err != nil {
 			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.TodoErrorResponse(err))
+			return c.JSON(fiber.Map{
+				"status":  "Not Found",
+				"message": "Not Found",
+			})
 		}
-		return c.SendStatus(fiber.StatusOK)
+		return c.JSON(fiber.Map{
+			"status":  "success",
+			"message": "Nsucess remote",
+		})
 	}
 }
 
@@ -79,10 +86,9 @@ func GetTodo(service todo.Service) fiber.Handler {
 		if err != nil {
 			return c.JSON(presenter.TodoErrorResponse(err))
 		}
-		Todo, err := service.GetTodo(uint(id))
-		if err != nil {
-			c.Status(http.StatusInternalServerError)
-			return c.JSON(presenter.TodoErrorResponse(err))
+		Todo, errservice := service.GetTodo(uint(id))
+		if errservice != nil {
+			return c.Status(fiber.StatusNotFound).JSON(presenter.TodoErrorResponse(errservice))
 		}
 		return c.JSON(Todo)
 	}
