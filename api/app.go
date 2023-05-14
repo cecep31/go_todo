@@ -10,6 +10,7 @@ import (
 
 	"github.com/joho/godotenv"
 
+	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -27,12 +28,14 @@ func main() {
 		log.Fatal("Database Connection Error $s", errdb)
 	}
 	fmt.Println("Database connection success!")
-
 	fmt.Println("Database auto migrate")
 	database.MigrateDDL(db)
 
 	fmt.Println("create app......")
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		JSONEncoder: json.Marshal,
+		JSONDecoder: json.Unmarshal,
+	})
 	app.Use(logger.New())
 	app.Use(recover.New())
 
